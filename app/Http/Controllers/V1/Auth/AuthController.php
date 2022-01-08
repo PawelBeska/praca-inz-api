@@ -67,6 +67,7 @@ class AuthController extends Controller
         } catch (\Exception $e) {
             $this->reportError($e);
             DB::rollBack();
+            dd($e);
             return $this->errorResponse(__('messages.Something went wrong.'), ResponseAlias::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
