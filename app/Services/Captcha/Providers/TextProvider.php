@@ -4,6 +4,7 @@ namespace App\Services\Captcha\Providers;
 
 use App\Interfaces\VerifyProviderInterface;
 use App\Models\Service;
+use App\Models\Verification;
 use App\Services\Captcha\VerificationService;
 use Illuminate\Support\Str;
 use Intervention\Image\Facades\Image;
@@ -14,9 +15,10 @@ class TextProvider implements VerifyProviderInterface
 
 
     public function __construct(private Service $service)
-    {}
+    {
+    }
 
-    public function verify()
+    public function verify(Verification $verification)
     {
         // TODO: Implement verify() method.
     }
