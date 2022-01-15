@@ -28,4 +28,20 @@ Route::prefix('/auth')->group(function () {
         Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
     });
+
+
+});
+Route::middleware('auth:api')->name('dashboard.')->group(function () {
+    Route::apiResource('services', \App\Http\Controllers\V1\ServicesController::class)->only(['index', 'store']);
+    Route::apiResource('profile', \App\Http\Controllers\V1\ProfileController::class)->only(['index', 'update']);
+    Route::apiResource('stats', \App\Http\Controllers\V1\StatsController::class)->only(['index']);
+
+});
+
+
+Route::prefix('/captcha/{service:uuid}/')->middleware('captcha')->name('captcha.')->group(function () {
+    Route::get('/generate', [\App\Http\Controllers\V1\CaptchaController::class, 'generate'])->name('generate');
+
+    Route::post('/generate', [\App\Http\Controllers\V1\CaptchaController::class, 'generate'])->name('generate');
+    Route::post('/verify', [\App\Http\Controllers\V1\CaptchaController::class, 'verify'])->name('verify');
 });
