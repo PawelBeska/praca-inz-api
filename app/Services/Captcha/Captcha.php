@@ -6,12 +6,15 @@ use App\Exceptions\VerifyProviderNotFound;
 use App\Interfaces\VerifyProviderInterface;
 use App\Models\Service;
 use App\Services\Captcha\Providers\TextProvider;
+use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Request;
 
 class Captcha
 {
 
     private VerifyProviderInterface $verifyProvider;
 
+    private FormRequest|Request $request;
     private Service $service;
 
     /**
@@ -24,10 +27,12 @@ class Captcha
     /**
      * @param string|VerifyProviderInterface $verifyProvider
      * @param Service $service
+     * @param FormRequest|Request $request
      * @throws VerifyProviderNotFound
      */
-    public function __construct(string|VerifyProviderInterface $verifyProvider, Service $service)
+    public function __construct(string|VerifyProviderInterface $verifyProvider, Service $service, FormRequest|Request $request)
     {
+        $this->request = $request;
         $this->service = $service;
         $this->setVerifyProvider($verifyProvider);
     }
@@ -44,7 +49,7 @@ class Captcha
 
         if (gettype($verifyProvider) == "string") {
             if (array_key_exists((string)$verifyProvider, $this->verifyProviders))
-                $this->verifyProvider = new $this->verifyProviders[(string)$verifyProvider]($this->service);
+                $this->verifyProvider = new $this->verifyProviders[(string)$verifyProvider]($this->service, $this->request);
             else
                 throw new VerifyProviderNotFound('The specified provider was not found. Requested provider: ' . $verifyProvider);
         }

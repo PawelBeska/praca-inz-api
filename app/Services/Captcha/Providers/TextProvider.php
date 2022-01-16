@@ -6,6 +6,9 @@ use App\Interfaces\VerifyProviderInterface;
 use App\Models\Service;
 use App\Models\Verification;
 use App\Services\Captcha\VerificationService;
+use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Intervention\Image\Facades\Image;
 use JetBrains\PhpStorm\ArrayShape;
@@ -14,15 +17,18 @@ class TextProvider implements VerifyProviderInterface
 {
 
 
-    public function __construct(private Service $service)
+    public function __construct(private Service $service, private FormRequest|Request $request)
     {
     }
 
-    public function verify(Verification $verification)
+    public function verify(Verification $verification, Request $request): bool
     {
-        // TODO: Implement verify() method.
-    }
+        if (!$verification->active && $request->ip() == $verification->ip_address)
+            return false;
 
+        (new VerificationService($verification))->setActive(false);
+        return Hash::check($request->get('text'), $verification->control);
+    }
 
     /**
      * @return array
@@ -34,7 +40,12 @@ class TextProvider implements VerifyProviderInterface
     public function generate(): array
     {
         $text = Str::random(6);
-        $verification = (new VerificationService())->add($this, $text, $this->service);
+        $verification = (new VerificationService())->add(
+            $this,
+            $text,
+            $this->service,
+            $this->request->ip()
+        );
         $image = Image::make(storage_path('app/public/background.jpg'));
         $image->text(Str::random(6), 155, 16, function ($font) {
             $font->file(storage_path('app/public/font.ttf'));

@@ -43,5 +43,5 @@ Route::prefix('/captcha/{service:uuid}/')->middleware('captcha')->name('captcha.
     Route::get('/generate', [\App\Http\Controllers\V1\CaptchaController::class, 'generate'])->name('generate');
 
     Route::post('/generate', [\App\Http\Controllers\V1\CaptchaController::class, 'generate'])->name('generate');
-    Route::post('/verify', [\App\Http\Controllers\V1\CaptchaController::class, 'verify'])->name('verify');
+    Route::post('/verify/{verification:uuid}', [\App\Http\Controllers\V1\CaptchaController::class, 'verify'])->name('verify');
 });

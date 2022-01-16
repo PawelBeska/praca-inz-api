@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @property string $control
  * @property bool $active
  * @property int $service_id
+ * @property mixed $ip_address
  */
 class Verification extends Model
 {

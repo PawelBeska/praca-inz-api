@@ -4,14 +4,16 @@ namespace App\Interfaces;
 
 use App\Models\Service;
 use App\Models\Verification;
+use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Request;
 
 interface  VerifyProviderInterface
 {
 
-    public function __construct(Service $service);
+    public function __construct(Service $service,FormRequest|Request $request);
 
 
-    public function verify(Verification $verification);
+    public function verify(Verification $verification, FormRequest|Request $request);
 
     public function generate();
 

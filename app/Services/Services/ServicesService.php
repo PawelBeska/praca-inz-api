@@ -7,8 +7,11 @@ use App\Models\User;
 
 class ServicesService
 {
-    public function __construct(private Service $service = new Service())
+    private Service $service;
+
+    public function __construct(Service $service = null)
     {
+        $this->service = $service ? $service : new Service();
     }
 
     /**
