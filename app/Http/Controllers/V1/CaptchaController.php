@@ -30,6 +30,7 @@ class CaptchaController extends Controller
             $captcha = (new Captcha('text', $service, $request))->getVerifyProvider()->generate();
             return $this->successResponse($captcha);
         } catch (\Exception $e) {
+            dd($e);
             $this->reportError($e);
             return $this->errorResponse(__('Something went wrong.'), ResponseAlias::HTTP_INTERNAL_SERVER_ERROR);
         }
