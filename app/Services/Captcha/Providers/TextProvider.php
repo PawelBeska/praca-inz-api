@@ -23,7 +23,11 @@ class TextProvider implements VerifyProviderInterface
 
     public function verify(Verification $verification, Request $request): bool
     {
-        if (!$verification->active && $request->ip() == $verification->ip_address)
+        if (
+            !$verification->active &&
+            $request->ip() == $verification->ip_address &&
+            $verification->service_id == $this->service->id &&
+            !$verification->valid_until->isPast())
             return false;
 
         (new VerificationService($verification))->setActive(false);

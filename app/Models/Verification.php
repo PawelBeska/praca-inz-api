@@ -24,6 +24,10 @@ class Verification extends Model
 
     public $timestamps = false;
 
+    protected $casts = [
+        'valid_until' => 'datetime',
+    ];
+    protected $dates = ['valid_until'];
     /**
      * @return HasOne
      */

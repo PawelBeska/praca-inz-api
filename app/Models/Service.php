@@ -21,6 +21,11 @@ class Service extends Model
 {
     use HasFactory;
 
+    protected $casts = [
+        'valid_until' => 'datetime',
+    ];
+
+    protected $dates = ['created_at', 'updated_at',  'valid_until'];
     /**
      * @return HasOne
      */
