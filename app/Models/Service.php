@@ -2,11 +2,14 @@
 
 namespace App\Models;
 
+use App\Helpers\BaseHelper;
+use App\Traits\HasUuid;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Support\Str;
 
 /**
  * @property int $id
@@ -21,11 +24,30 @@ class Service extends Model
 {
     use HasFactory;
 
+    const STATUS_ACTIVE = 'active';
+    const STATUS_PENDING = 'pending';
+    const STATUS_BLOCKED = 'blocked';
+
+    const TYPE_TEXT = 'text';
+    const TYPE_INVISIBLE = 'invisible';
+
     protected $casts = [
         'valid_until' => 'datetime',
     ];
 
-    protected $dates = ['created_at', 'updated_at',  'valid_until'];
+    protected $dates = ['created_at', 'updated_at', 'valid_until'];
+
+
+    protected static function booted()
+    {
+        parent::boot();
+
+        static::creating(function ($service) {
+            $service->uuid = Str::uuid();
+        });
+
+    }
+
     /**
      * @return HasOne
      */

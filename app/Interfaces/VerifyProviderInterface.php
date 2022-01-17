@@ -10,10 +10,10 @@ use Illuminate\Http\Request;
 interface  VerifyProviderInterface
 {
 
-    public function __construct(Service $service,FormRequest|Request $request);
+    public function __construct(Service $service,Array|FormRequest|Request $request);
 
 
-    public function verify(Verification $verification, FormRequest|Request $request);
+    public function verify(Verification $verification, Array|FormRequest|Request $request);
 
     public function generate();
 

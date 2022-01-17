@@ -14,7 +14,7 @@ class Captcha
 
     private VerifyProviderInterface $verifyProvider;
 
-    private FormRequest|Request $request;
+    private Array|FormRequest|Request $request;
     private Service $service;
 
     /**
@@ -27,10 +27,10 @@ class Captcha
     /**
      * @param string|VerifyProviderInterface $verifyProvider
      * @param Service $service
-     * @param FormRequest|Request $request
+     * @param FormRequest|Request|array $request
      * @throws VerifyProviderNotFound
      */
-    public function __construct(string|VerifyProviderInterface $verifyProvider, Service $service, FormRequest|Request $request)
+    public function __construct(string|VerifyProviderInterface $verifyProvider, Service $service, Array|FormRequest|Request $request)
     {
         $this->request = $request;
         $this->service = $service;

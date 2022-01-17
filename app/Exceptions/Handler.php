@@ -92,7 +92,7 @@ class Handler extends ExceptionHandler
             return response()->json([
                 'status' => "error",
                 'code' => "422",
-                'message' => $e->getMessage(),
+                'message' => "Object not found",
 
             ], ResponseAlias::HTTP_UNPROCESSABLE_ENTITY);
         }
