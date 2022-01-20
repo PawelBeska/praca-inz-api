@@ -22,20 +22,19 @@ class InvisibleProvider implements VerifyProviderInterface
     {
     }
 
-    public function verify(Verification $verification, array|FormRequest|Request $request): bool
+    public function verify(Verification $verification, array|FormRequest|Request $request)
     {
-        if (getType($request) == "array") {
-            (new VerificationService($verification))->setActive(false);
-            return Hash::check($request['text'], $verification->control);
-        } else if (
-            !$verification->active &&
-            $request->ip() == $verification->ip_address &&
-            $verification->service_id == $this->service->id &&
-            !$verification->valid_until->isPast())
+
+        if (
+            !$verification->active ||
+            $request->ip() != $verification->ip_address ||
+            $verification->service_id != $this->service->id ||
+            $verification->valid_until->isPast())
             return false;
 
+
         (new VerificationService($verification))->setActive(false);
-        return Hash::check($request->get('text'), $verification->control);
+        return Hash::check($request->get('answer'), $verification->control);
     }
 
 

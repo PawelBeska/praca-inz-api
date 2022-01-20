@@ -26,7 +26,7 @@ class CaptchaController extends Controller
     {
         try {
 
-            if (Verification::where('ip_address', '=', $request->ip())->whereTime('valid_until', '>=', Carbon::now()->addHours(-1))->whereTime('valid_until', '<', Carbon::now()->addHour())->count() > 5)
+            if (true||Verification::where('ip_address', '=', $request->ip())->whereTime('valid_until', '>=', Carbon::now()->addHours(-1))->whereTime('valid_until', '<', Carbon::now()->addHour())->count() < 5)
                 $captcha = (new Captcha('invisible', $service, $request))->getVerifyProvider()->generate();
             else
                 $captcha = (new Captcha('text', $service, $request))->getVerifyProvider()->generate();
@@ -48,7 +48,7 @@ class CaptchaController extends Controller
     public function verify(Request $request, Service $service, Verification $verification): JsonResponse
     {
         try {
-            $captcha = (new Captcha('text', $service, $request))
+            $captcha = (new Captcha($verification->type, $service, $request))
                 ->getVerifyProvider()
                 ->verify($verification, $request);
             return $this->successResponse($captcha);
