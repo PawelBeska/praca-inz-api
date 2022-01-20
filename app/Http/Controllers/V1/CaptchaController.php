@@ -26,7 +26,7 @@ class CaptchaController extends Controller
     {
         try {
 
-            if (true||Verification::where('ip_address', '=', $request->ip())->whereTime('valid_until', '>=', Carbon::now()->addHours(-1))->whereTime('valid_until', '<', Carbon::now()->addHour())->count() < 5)
+            if (false&&Verification::where('ip_address', '=', $request->ip())->whereTime('valid_until', '>=', Carbon::now()->addHours(-1))->whereTime('valid_until', '<', Carbon::now()->addHour())->count() < 5)
                 $captcha = (new Captcha('invisible', $service, $request))->getVerifyProvider()->generate();
             else
                 $captcha = (new Captcha('text', $service, $request))->getVerifyProvider()->generate();

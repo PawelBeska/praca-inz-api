@@ -23,10 +23,7 @@ class TextProvider implements VerifyProviderInterface
 
     public function verify(Verification $verification, array|FormRequest|Request $request): bool
     {
-        if (getType($request) == "array") {
-            (new VerificationService($verification))->setActive(false);
-            return Hash::check($request['text'], $verification->control);
-        } else    if (
+         if (
             !$verification->active ||
             $request->ip() != $verification->ip_address ||
             $verification->service_id != $this->service->id ||
@@ -34,7 +31,7 @@ class TextProvider implements VerifyProviderInterface
             return false;
 
         (new VerificationService($verification))->setActive(false);
-        return Hash::check($request->get('text'), $verification->control);
+        return Hash::check($request->get('answer'), $verification->control);
     }
 
     private function generateString($length = 8): string
