@@ -9,11 +9,12 @@ use App\Services\Captcha\VerificationService;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 use Intervention\Image\Facades\Image;
 use Intervention\Image\Gd\Font;
 use JetBrains\PhpStorm\ArrayShape;
 
-class TextProvider implements VerifyProviderInterface
+class InvisibleProvider implements VerifyProviderInterface
 {
 
 
@@ -37,16 +38,7 @@ class TextProvider implements VerifyProviderInterface
         return Hash::check($request->get('text'), $verification->control);
     }
 
-    private function generateString($length = 8): string
-    {
-        $characters = '23456789abcdefghkmnpqstuvwxyzABCDEFGHKLMNPQRSTUVWXYZ';
-        $charactersLength = strlen($characters);
-        $randomString = '';
-        for ($i = 0; $i < $length; $i++) {
-            $randomString .= $characters[rand(0, $charactersLength - 1)];
-        }
-        return $randomString;
-    }
+
 
     /**
      * @return array
@@ -54,45 +46,26 @@ class TextProvider implements VerifyProviderInterface
      */
     #[ArrayShape([
         'image' => "string",
-        'token' => "\Ramsey\Uuid\UuidInterface"
+        'token' => ["\Ramsey\Uuid\UuidInterface",null],
+        'type'=>"string"
     ])]
     public function generate(): array
     {
-        $text = $this->generateString();
 
-        if (gettype($this->request) == "array")
+        $token = Str::uuid();
+
             $verification = (new VerificationService())->add(
                 $this,
-                $text,
-                $this->service,
-                "127.0.0.1"
-            );
-        else
-            $verification = (new VerificationService())->add(
-                $this,
-                $text,
+                $token,
                 $this->service,
                 $this->request->ip()
             );
-        $image = Image::make(storage_path('app/public/background.jpg'));
 
-        $image->fill('#dbdbdb');
-        $letters = str_split($text);
-
-        for ($x = 0; $x < count($letters); $x++) {
-            $image->text($letters[$x], 80 + ($x * random_int(18, 20)), 16 + random_int(0, 10), function (Font $font) {
-                $font->file(storage_path('app/public/font.ttf'));
-                $font->size(30);
-                $font->align('center');
-                $font->valign('top');
-                $font->angle(random_int(-45, 45));
-                $font->color("rgba(0,0,0, " . random_int(3, 5) / 10 . ")");
-            });
-        }
 
         return [
-            'image' => $image->encode('data-url')->getEncoded(),
-            'token' => $verification->uuid
+            'type'=>"invisible",
+            'token' => $verification->uuid,
+            'access_token' => $token,
         ];
     }
 
@@ -101,6 +74,6 @@ class TextProvider implements VerifyProviderInterface
      */
     public function __toString(): string
     {
-        return 'text';
+        return 'invisible';
     }
 }

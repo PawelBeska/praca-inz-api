@@ -5,6 +5,7 @@ namespace App\Services\Captcha;
 use App\Exceptions\VerifyProviderNotFound;
 use App\Interfaces\VerifyProviderInterface;
 use App\Models\Service;
+use App\Services\Captcha\Providers\InvisibleProvider;
 use App\Services\Captcha\Providers\TextProvider;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Request;
@@ -21,7 +22,8 @@ class Captcha
      * @var array|string[]
      */
     public array $verifyProviders = [
-        "text" => TextProvider::class
+        "text" => TextProvider::class,
+        "invisible"=> InvisibleProvider::class
     ];
 
     /**
