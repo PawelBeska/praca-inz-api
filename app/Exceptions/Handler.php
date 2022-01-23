@@ -10,8 +10,10 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Response;
 use Illuminate\Routing\Redirector;
 use Illuminate\Validation\ValidationException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Throwable;
 use Symfony\Component\HttpFoundation\Response as ResponseAlias;
+
 class Handler extends ExceptionHandler
 {
     /**
@@ -41,9 +43,6 @@ class Handler extends ExceptionHandler
      */
     public function register()
     {
-        $this->reportable(function (Throwable $e) {
-            //
-        });
     }
 
     /**
@@ -88,13 +87,24 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Throwable $e): Response|JsonResponse|Redirector|RedirectResponse|Application|ResponseAlias
     {
-        if($e instanceof ModelNotFoundException){
+        if ($e instanceof ModelNotFoundException) {
             return response()->json([
                 'status' => "error",
                 'code' => "422",
                 'message' => "Object not found",
 
             ], ResponseAlias::HTTP_UNPROCESSABLE_ENTITY);
+        } else if ($e instanceof NotFoundHttpException) {
+            if ($request->wantsJson())
+                return response()->json([
+                    'status' => "error",
+                    'code' => "422",
+                    'message' => "Page not found",
+
+                ], ResponseAlias::HTTP_NOT_FOUND);
+            else
+                return redirect()->to('https://webguard.pl/notfound');
+
         }
         return parent::render($request, $e);
     }
