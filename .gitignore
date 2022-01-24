@@ -15,3 +15,5 @@ yarn-error.log
 /.vscode
 .styleci.yml
 .editorconfig
+.htaccess
+deploy.sh
