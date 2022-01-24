@@ -10,11 +10,14 @@ use Illuminate\Support\Str;
 class UserService
 {
 
+    private User $user;
+
     /**
      * @param User|null $user
      */
-    public function __construct(private ?User $user = new User())
+    public function __construct(User $user = null)
     {
+        $this->user = $user ? $user : new User();
     }
 
     /**
