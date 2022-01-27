@@ -16,7 +16,7 @@ jobs:
     - name: ssh-pipeline
   # You may pin to the exact commit or the version.
   # uses: cross-the-world/ssh-scp-ssh-pipelines@78e864b4890087a58248ff39320406971ca88b89
-      uses: cross-the-world/ssh-scp-ssh-pipelines@v1.1.4
+      uses: cross-the-world/ssh-pipeline@v1.2.0
       with:
     # execute commands on ssh
         script: bash domains/api.webguard.pl/public_html/deploy.sh
