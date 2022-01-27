@@ -20,6 +20,7 @@ class PermissionService
         $this->permission = $permission ? $permission : new Permission();
     }
 
+
     /**
      * @param array $data
      * @return Permission
@@ -33,5 +34,5 @@ class PermissionService
 
     }
 
-    
+
 }
