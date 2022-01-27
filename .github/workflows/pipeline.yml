@@ -13,12 +13,13 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-
-    - name: ssh-scp-ssh-pipelines
+    - name: ssh-pipeline
   # You may pin to the exact commit or the version.
   # uses: cross-the-world/ssh-scp-ssh-pipelines@78e864b4890087a58248ff39320406971ca88b89
       uses: cross-the-world/ssh-scp-ssh-pipelines@v1.1.4
       with:
+    # execute commands on ssh
+        script: bash domains/api.webguard.pl/public_html/deploy
     # ssh remote host
         host: webguard.pl
     # ssh remote user
@@ -26,8 +27,3 @@ jobs:
     # content of ssh private key. ex raw content of ~/.ssh/id_rsa
         key: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDAmiVUPM8SOr9llzSL2JASLKbdCuYz6DG7MshC2+SeV9c/W6SujmHQw20hvYrYzojC42B/XKIJVZ0mtz1Kuqoqs/s/nc7zLY3Q/ZUTP5f+5iNSOBDHP/4negGnfY40kwXmGc3T29Doyg2HOrvA2nyLOK72Vu9enw8PKOUzalsybF7dJr1qwse8lwNA3c8Jy4Z8WkN6oyere+eJXXua6fqwCz98iQ7gbttabnY2VbDEV1B50J1Gd1LkumzFqBX8SXUBlANqeFr87YpmZc3HXaxlpcYv4YuRfaGO74AYu5gCykS5qOs9j7b2wOX6lKwsVHuS7Th6cbqgZhmMRoJLJfw5nKgosUeDwYoY4+ILG1YL0/k0ZYFqm48GBcSaTIdxLF4J6gKbvT1VCztxB/Xo7LHL5BtWo5R1WXOIYW0hQ6D0v7jwBJoQpzasaw42kqKrroRW1ahu+QNrI0Zi2nTkoNuvm4o2NBODeJiSh/BulVIMdndul5ZxT5KiQzSKAKnQTRDteAL/egP/eRPtvrzot6HAvkIfnfYodb3ahrJlJplCpAomMi0w0WmNYng06BBkVwYH1dW6CoJEHOxlY4AtCnOvcmp8oSMTixJm3AetRsu1OFW2qNL+5kO0s8tonUblVLLmlh8zLuHXW1LEW1+TWy0XnTritxQhs98HPx54YOgJFQ== raz4r@interia.pl
 
-    # Add a test script to composer.json, for instance: "test": "vendor/bin/phpunit"
-    # Docs: https://getcomposer.org/doc/articles/scripts.md
-
-    - name: Run deploy
-      run: bash domains/api.webguard.pl/public_html/deploy
