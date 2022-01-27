@@ -19,7 +19,7 @@ jobs:
       uses: cross-the-world/ssh-scp-ssh-pipelines@v1.1.4
       with:
     # execute commands on ssh
-        script: bash domains/api.webguard.pl/public_html/deploy
+        script: bash domains/api.webguard.pl/public_html/deploy.sh
     # ssh remote host
         host: webguard.pl
     # ssh remote user
