@@ -2,9 +2,13 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\ServiceTypeEnum;
+use App\Models\Service;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rules\Enum;
 
-class StoreServicesRequest extends FormRequest
+class StoreServiceRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -13,7 +17,7 @@ class StoreServicesRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return Auth::user()->can('store', Service::class);
     }
 
     /**
@@ -24,7 +28,8 @@ class StoreServicesRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'name' => ['required', 'string', 'max:255'],
+            'type'=>['required','string',new Enum(ServiceTypeEnum::class)],
         ];
     }
 }

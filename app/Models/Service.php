@@ -24,13 +24,6 @@ class Service extends Model
 {
     use HasFactory;
 
-    const STATUS_ACTIVE = 'active';
-    const STATUS_PENDING = 'pending';
-    const STATUS_BLOCKED = 'blocked';
-
-    const TYPE_TEXT = 'text';
-    const TYPE_INVISIBLE = 'invisible';
-
     protected $casts = [
         'valid_until' => 'datetime',
     ];

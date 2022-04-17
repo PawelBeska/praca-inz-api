@@ -2,6 +2,7 @@
 
 namespace App\Services\Captcha\Providers;
 
+use App\Enums\ServiceTypeEnum;
 use App\Interfaces\VerifyProviderInterface;
 use App\Models\Service;
 use App\Models\Verification;
@@ -23,10 +24,11 @@ class TextProvider implements VerifyProviderInterface
 
     public function verify(Verification $verification, array|FormRequest|Request $request): bool
     {
-         if (
+        #!TODO add policy
+        if (
             !$verification->active ||
-            $request->ip() != $verification->ip_address ||
-            $verification->service_id != $this->service->id ||
+            $request->ip() !== $verification->ip_address ||
+            $verification->service_id !== $this->service->id ||
             $verification->valid_until->isPast())
             return false;
 
@@ -57,26 +59,27 @@ class TextProvider implements VerifyProviderInterface
     {
         $text = $this->generateString();
 
-        if (gettype($this->request) == "array")
+        if (gettype($this->request) === "array") {
             $verification = (new VerificationService())->add(
                 $this,
                 $text,
                 $this->service,
                 "127.0.0.1"
             );
-        else
+        } else {
             $verification = (new VerificationService())->add(
                 $this,
                 $text,
                 $this->service,
                 $this->request->ip()
             );
+        }
         $image = Image::make(storage_path('app/public/background.jpg'));
 
         $image->fill('#dbdbdb');
         $letters = str_split($text);
 
-        for ($x = 0; $x < count($letters); $x++) {
+        for ($x = 0, $xMax = count($letters); $x < $xMax; $x++) {
             $image->text($letters[$x], 80 + ($x * random_int(18, 20)), 16 + random_int(0, 10), function (Font $font) {
                 $font->file(storage_path('app/public/font.ttf'));
                 $font->size(30);
@@ -98,6 +101,6 @@ class TextProvider implements VerifyProviderInterface
      */
     public function __toString(): string
     {
-        return 'text';
+        return ServiceTypeEnum::TEXT->value;
     }
 }

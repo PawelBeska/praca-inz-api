@@ -32,9 +32,9 @@ Route::prefix('/auth')->group(function () {
 
 });
 Route::middleware('auth:api')->name('dashboard.')->group(function () {
-    Route::apiResource('services', \App\Http\Controllers\V1\ServicesController::class)->only(['index', 'store']);
+    Route::apiResource('services', \App\Http\Controllers\V1\ServiceController::class)->only(['index', 'update', 'store']);
     Route::apiResource('profile', \App\Http\Controllers\V1\ProfileController::class)->only(['index', 'update']);
-    Route::apiResource('stats', \App\Http\Controllers\V1\StatsController::class)->only(['index']);
+    Route::apiResource('stats', \App\Http\Controllers\V1\StatController::class)->only(['index']);
 
 });
 

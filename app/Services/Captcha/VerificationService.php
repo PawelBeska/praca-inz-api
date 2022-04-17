@@ -17,7 +17,7 @@ class VerificationService
      */
     public function __construct(Verification $verification = null)
     {
-        $this->verification = $verification ? $verification : new Verification();
+        $this->verification = $verification ?: new Verification();
     }
 
 

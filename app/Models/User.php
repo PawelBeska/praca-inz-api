@@ -7,6 +7,7 @@ use App\Notifications\SignupActivate;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Collection;
@@ -19,6 +20,7 @@ use Laravel\Sanctum\HasApiTokens;
  * @property mixed|\Ramsey\Uuid\UuidInterface|null $user_activation_key
  * @property mixed|string $password
  * @property array|\ArrayAccess|mixed $full_name
+ * @property mixed $role_id
  */
 class User extends Authenticatable implements MustVerifyEmail
 
@@ -57,6 +59,12 @@ class User extends Authenticatable implements MustVerifyEmail
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+
+    public function services(): hasMany
+    {
+        return $this->hasMany(Service::class);
+    }
 
     /**
      * @return \Illuminate\Support\Collection

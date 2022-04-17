@@ -2,6 +2,7 @@
 
 namespace App\Services\Captcha\Providers;
 
+use App\Enums\ServiceTypeEnum;
 use App\Interfaces\VerifyProviderInterface;
 use App\Models\Service;
 use App\Models\Verification;
@@ -10,8 +11,6 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
-use Intervention\Image\Facades\Image;
-use Intervention\Image\Gd\Font;
 use JetBrains\PhpStorm\ArrayShape;
 
 class InvisibleProvider implements VerifyProviderInterface
@@ -22,21 +21,20 @@ class InvisibleProvider implements VerifyProviderInterface
     {
     }
 
-    public function verify(Verification $verification, array|FormRequest|Request $request)
+    public function verify(Verification $verification, array|FormRequest|Request $request): bool
     {
 
         if (
             !$verification->active ||
-            $request->ip() != $verification->ip_address ||
-            $verification->service_id != $this->service->id ||
-            $verification->valid_until->isPast())
+            $verification->service_id !== $this->service->id ||
+            $request->ip() !== $verification->ip_address ||
+            $verification->valid_until->isPast()) {
             return false;
-
+        }
 
         (new VerificationService($verification))->setActive(false);
         return Hash::check($request->get('answer'), $verification->control);
     }
-
 
 
     /**
@@ -45,24 +43,23 @@ class InvisibleProvider implements VerifyProviderInterface
      */
     #[ArrayShape([
         'image' => "string",
-        'token' => ["\Ramsey\Uuid\UuidInterface",null],
-        'type'=>"string"
+        'token' => ["\Ramsey\Uuid\UuidInterface", null],
+        'type' => "string"
     ])]
     public function generate(): array
     {
-
         $token = Str::uuid();
 
-            $verification = (new VerificationService())->add(
-                $this,
-                $token,
-                $this->service,
-                $this->request->ip()
-            );
+        $verification = (new VerificationService())->add(
+            $this,
+            $token,
+            $this->service,
+            $this->request->ip()
+        );
 
 
         return [
-            'type'=>"invisible",
+            'type' => "invisible",
             'token' => $verification->uuid,
             'access_token' => $token,
         ];
@@ -73,6 +70,6 @@ class InvisibleProvider implements VerifyProviderInterface
      */
     public function __toString(): string
     {
-        return 'invisible';
+        return ServiceTypeEnum::INVISIBLE->value;
     }
 }
