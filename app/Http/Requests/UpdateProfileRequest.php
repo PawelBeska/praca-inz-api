@@ -25,10 +25,10 @@ class UpdateProfileRequest extends FormRequest
     public function rules()
     {
         return [
-            "full_name" => ['required', 'string', 'max:255'],
-            "password" => ['required', 'current_password', 'string', 'max:255'],
-            "new_password" => ['required', 'string', 'confirmed', 'max:255'],
-            "new_password_confirmation" => ['required', 'string', 'max:255']
+            "full_name" => ['required_without:password', 'string', 'max:255'],
+            "password" => ['required_without:full_name', 'current_password', 'string', 'max:255'],
+            "new_password" => ['required_without:full_name', 'string', 'confirmed', 'max:255'],
+            "new_password_confirmation" => ['required_without:full_name', 'string', 'max:255']
         ];
     }
 }

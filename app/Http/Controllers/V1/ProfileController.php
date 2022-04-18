@@ -18,7 +18,7 @@ class ProfileController extends Controller
 
     public function __construct()
     {
-        $this->authorizeResource(User::class, 'user');
+        $this->authorizeResource(User::class, 'profile');
     }
 
     /**
@@ -35,7 +35,7 @@ class ProfileController extends Controller
      * @param \App\Http\Requests\UpdateProfileRequest $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function update(UpdateProfileRequest $request): JsonResponse
+    public function update(UpdateProfileRequest $request, User $profile): JsonResponse
     {
         $data = $request->validated();
         try {
