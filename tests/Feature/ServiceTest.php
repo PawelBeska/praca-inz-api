@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Enums\ServiceStatusEnum;
 use App\Enums\ServiceTypeEnum;
 use App\Models\Company;
+use App\Models\Service;
 use App\Models\User;
 use App\Services\Services\ServicesService;
 use Illuminate\Database\Eloquent\Collection;
@@ -36,17 +37,12 @@ class ServiceTest extends TestCase
 
     public function test_get_services_list()
     {
-        Sanctum::actingAs(
-            $this->user
-        );
+        $user = User::factory()
+            ->has(Service::factory()->count(1))
+            ->createOne();
 
-        (new ServicesService())->assignData(
-            name: 'service test',
-            type: ServiceTypeEnum::TEXT,
-            status: ServiceStatusEnum::ACTIVE,
-            valid_until: Carbon::now()->addMonth(),
-            user: $this->user,
-            private_key: Str::uuid()
+        Sanctum::actingAs(
+            $user
         );
 
         $response = $this->get(
@@ -121,21 +117,17 @@ class ServiceTest extends TestCase
 
     public function test_update_service()
     {
+        $user = User::factory()
+            ->has(Service::factory()->count(1))
+            ->createOne();
+
         Sanctum::actingAs(
-            $this->user
+            $user
         );
 
-        $service = (new ServicesService())->assignData(
-            name: 'service test',
-            type: ServiceTypeEnum::TEXT,
-            status: ServiceStatusEnum::ACTIVE,
-            valid_until: Carbon::now()->addMonth(),
-            user: $this->user,
-            private_key: Str::uuid()
-        );
 
         $response = $this->put(
-            route("dashboard.services.update", ['service' => $service->id]),
+            route("dashboard.services.update", ['service' => $user->services()->first()->id]),
             [
                 'name' => $this->faker()->name,
                 'type' => ServiceTypeEnum::TEXT->value
@@ -165,23 +157,20 @@ class ServiceTest extends TestCase
 
     public function test_remove_service()
     {
+        $user = User::factory()
+            ->has(Service::factory()->count(1))
+            ->createOne();
+
         Sanctum::actingAs(
-            $this->user
-        );
-        $service = (new ServicesService())->assignData(
-            name: 'service test',
-            type: ServiceTypeEnum::TEXT,
-            status: ServiceStatusEnum::ACTIVE,
-            valid_until: Carbon::now()->addMonth(),
-            user: $this->user,
-            private_key: Str::uuid()
+            $user
         );
 
         $response = $this->delete(
-            route("dashboard.services.destroy", ['service' => $service->id])
+            route("dashboard.services.destroy", ['service' => $user->services()->first()->id])
         );
 
 
+        // dd($user->services->first()->id);
         $response->assertStatus(200);
     }
 }
