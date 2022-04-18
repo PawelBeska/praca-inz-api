@@ -51,15 +51,12 @@ class TextProvider implements VerifyProviderInterface
      * @return array
      * @throws \Exception
      */
-    #[ArrayShape([
-        'image' => "string",
-        'token' => "\Ramsey\Uuid\UuidInterface"
-    ])]
+
     public function generate(): array
     {
         $text = $this->generateString();
 
-        if (gettype($this->request) === "array") {
+        if (is_array($this->request)) {
             $verification = (new VerificationService())->add(
                 $this,
                 $text,
@@ -74,8 +71,8 @@ class TextProvider implements VerifyProviderInterface
                 $this->request->ip()
             );
         }
-        $image = Image::make(storage_path('app/public/background.jpg'));
 
+        $image = Image::make(storage_path('app/public/background.jpg'));
         $image->fill('#dbdbdb');
         $letters = str_split($text);
 
@@ -91,6 +88,7 @@ class TextProvider implements VerifyProviderInterface
         }
 
         return [
+            'type' => (string)$this,
             'image' => $image->encode('data-url')->getEncoded(),
             'token' => $verification->uuid
         ];

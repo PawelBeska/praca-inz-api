@@ -41,7 +41,6 @@ Route::middleware('auth:sanctum')->name('dashboard.')->group(function () {
 
 Route::prefix('/captcha/{service:uuid}/')->middleware('captcha')->name('captcha.')->group(function () {
     Route::get('/generate', [\App\Http\Controllers\V1\CaptchaController::class, 'generate'])->name('generate');
-
     Route::post('/generate', [\App\Http\Controllers\V1\CaptchaController::class, 'generate'])->name('generate');
     Route::post('/verify/{verification:uuid}', [\App\Http\Controllers\V1\CaptchaController::class, 'verify'])->name('verify');
 });

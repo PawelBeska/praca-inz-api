@@ -28,4 +28,21 @@ class ServiceFactory extends Factory
         ];
 
     }
+
+    public function type(ServiceTypeEnum $type): ServiceFactory
+    {
+        return $this->state(function (array $attributes) use ($type) {
+            return [
+                'type' => $type->value,
+            ];
+        });
+    }
+    public function status(ServiceStatusEnum $status): ServiceFactory
+    {
+        return $this->state(function (array $attributes) use ($status) {
+            return [
+                'status' => $status->value,
+            ];
+        });
+    }
 }

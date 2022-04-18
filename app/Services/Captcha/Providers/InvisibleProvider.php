@@ -59,7 +59,7 @@ class InvisibleProvider implements VerifyProviderInterface
 
 
         return [
-            'type' => "invisible",
+            'type' => (string) $this,
             'token' => $verification->uuid,
             'access_token' => $token,
         ];

@@ -14,18 +14,18 @@ use Illuminate\Http\Request;
 class Captcha
 {
 
-    private VerifyProviderInterface $verifyProvider;
+    private ServiceTypeEnum|VerifyProviderInterface $verifyProvider;
 
     private array|FormRequest|Request $request;
     private Service $service;
 
     /**
-     * @param string|VerifyProviderInterface $verifyProvider
+     * @param \App\Enums\ServiceTypeEnum|\App\Interfaces\VerifyProviderInterface $verifyProvider
      * @param Service $service
      * @param FormRequest|Request|array $request
-     * @throws VerifyProviderNotFound
+     * @throws \App\Exceptions\VerifyProviderNotFound
      */
-    public function __construct(string|VerifyProviderInterface $verifyProvider, Service $service, array|FormRequest|Request $request)
+    public function __construct(ServiceTypeEnum|VerifyProviderInterface $verifyProvider, Service $service, array|FormRequest|Request $request)
     {
         $this->request = $request;
         $this->service = $service;
@@ -41,16 +41,16 @@ class Captcha
     }
 
     /**
-     * @param string|VerifyProviderInterface $verifyProvider
+     * @param \App\Enums\ServiceTypeEnum|\App\Interfaces\VerifyProviderInterface $verifyProvider
      * @return void
-     * @throws VerifyProviderNotFound
+     * @throws \App\Exceptions\VerifyProviderNotFound
      */
-    public function setVerifyProvider(string|VerifyProviderInterface $verifyProvider): void
+    public function setVerifyProvider(ServiceTypeEnum|VerifyProviderInterface $verifyProvider): void
     {
         if ($verifyProvider instanceof VerifyProviderInterface) {
             $this->verifyProvider = $verifyProvider;
         } else {
-            $this->verifyProvider = match ((string)$verifyProvider) {
+            $this->verifyProvider = match ($verifyProvider->value) {
                 ServiceTypeEnum::INVISIBLE->value => new InvisibleProvider($this->service, $this->request),
                 ServiceTypeEnum::TEXT->value => new TextProvider($this->service, $this->request),
                 default => throw new VerifyProviderNotFound('The specified provider was not found. Requested provider: ' . $verifyProvider)

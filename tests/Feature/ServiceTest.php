@@ -2,18 +2,13 @@
 
 namespace Tests\Feature;
 
-use App\Enums\ServiceStatusEnum;
 use App\Enums\ServiceTypeEnum;
-use App\Models\Company;
 use App\Models\Service;
 use App\Models\User;
-use App\Services\Services\ServicesService;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Support\Carbon;
-use Illuminate\Support\Str;
 use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
@@ -169,8 +164,6 @@ class ServiceTest extends TestCase
             route("dashboard.services.destroy", ['service' => $user->services()->first()->id])
         );
 
-
-        // dd($user->services->first()->id);
         $response->assertStatus(200);
     }
 }
