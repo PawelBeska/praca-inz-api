@@ -24,15 +24,15 @@ Route::prefix('/auth')->group(function () {
     Route::post('/password/reset', [AuthController::class, 'passwordReset']);
 
 
-    Route::middleware(['auth:api'])->group(function () {
+    Route::middleware(['auth:sanctum'])->group(function () {
         Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
     });
 
 
 });
-Route::middleware('auth:api')->name('dashboard.')->group(function () {
-    Route::apiResource('services', \App\Http\Controllers\V1\ServiceController::class)->only(['index', 'update', 'store']);
+Route::middleware('auth:sanctum')->name('dashboard.')->group(function () {
+    Route::apiResource('services', \App\Http\Controllers\V1\ServiceController::class);
     Route::apiResource('profile', \App\Http\Controllers\V1\ProfileController::class)->only(['index', 'update']);
     Route::apiResource('stats', \App\Http\Controllers\V1\StatController::class)->only(['index']);
 

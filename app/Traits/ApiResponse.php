@@ -20,8 +20,9 @@ trait ApiResponse
         return response()->json([
             'message' => $message,
             'data' => $data,
-            'status' => 'ok'
-        ], $code);
+            'status' => 'ok',
+            'code' => $code
+        ], 200);
     }
 
     /**

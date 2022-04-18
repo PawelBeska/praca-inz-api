@@ -8,6 +8,7 @@ use App\Models\Service;
 use App\Models\User;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Hash;
 
 class ServicesService
 {
@@ -31,13 +32,18 @@ class ServicesService
         ServiceTypeEnum      $type,
         ServiceStatusEnum    $status,
         Carbon               $valid_until,
-        Authenticatable|User $user): Service
+        Authenticatable|User $user,
+        string               $private_key = null
+    ): Service
     {
         $this->service->user_id = $user->id;
         $this->service->name = $name;
         $this->service->type = $type;
         $this->service->status = $status;
         $this->service->valid_until = $valid_until;
+        if ($private_key) {
+            $this->service->private_key = Hash::make($private_key);
+        }
         $this->service->save();
         return $this->service;
     }

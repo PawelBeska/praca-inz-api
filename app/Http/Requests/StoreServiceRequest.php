@@ -17,7 +17,7 @@ class StoreServiceRequest extends FormRequest
      */
     public function authorize()
     {
-        return Auth::user()->can('store', Service::class);
+        return Auth::user()->can('create', Service::class);
     }
 
     /**

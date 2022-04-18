@@ -13,9 +13,11 @@ use App\Http\Resources\ServiceResource;
 use App\Models\Service;
 use App\Services\Services\ServicesService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 
 class ServiceController extends Controller
@@ -27,12 +29,13 @@ class ServiceController extends Controller
     }
 
     /**
+     * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function index(): JsonResponse
+    public function index(Request $request): JsonResponse
     {
         return $this->successResponse(
-            new ServiceCollection(Auth::user()->services)
+            new ServiceCollection(Auth::user()->services()->paginate(Arr::get($request->all(), 'per_page')))
         );
     }
 
@@ -50,7 +53,8 @@ class ServiceController extends Controller
                 type: ServiceTypeEnum::from(Arr::get($data, 'type')),
                 status: ServiceStatusEnum::ACTIVE,
                 valid_until: Carbon::now()->addMonth(),
-                user: Auth::user()
+                user: Auth::user(),
+                private_key: Str::uuid()
             );
             return $this->successResponse(
                 new ServiceResource($service),
@@ -98,14 +102,14 @@ class ServiceController extends Controller
      * @param \App\Models\Service $service
      * @return \Illuminate\Http\JsonResponse
      */
-    public function delete(DeleteServiceRequest $request, Service $service): JsonResponse
+    public function destroy(DeleteServiceRequest $request, Service $service): JsonResponse
     {
 
         try {
             $service->delete();
 
             return $this->successResponse(
-                new ServiceCollection(Auth::user()->services),
+                new ServiceCollection(Auth::user()->services()->paginate(Arr::get($request->all(), 'per_page'))),
                 __('successfully deleted the service.'),
                 1003
             );
