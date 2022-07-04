@@ -10,6 +10,7 @@ use App\Services\Captcha\VerificationService;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use JetBrains\PhpStorm\ArrayShape;
 
@@ -24,15 +25,19 @@ class InvisibleProvider implements VerifyProviderInterface
     public function verify(Verification $verification, array|FormRequest|Request $request): bool
     {
 
+
         if (
             !$verification->active ||
             $verification->service_id !== $this->service->id ||
             $request->ip() !== $verification->ip_address ||
             $verification->valid_until->isPast()) {
+            Log::info('Captcha verification failed. Verification is not active, or the IP address is not the same as the one used for the verification, or the verification has expired.');
             return false;
         }
+        Log::info('Captcha verification succeeded.');
 
         (new VerificationService($verification))->setActive(false);
+        Log::info(Hash::check($request->get('answer'), $verification->control));
         return Hash::check($request->get('answer'), $verification->control);
     }
 
