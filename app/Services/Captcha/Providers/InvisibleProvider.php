@@ -37,7 +37,8 @@ class InvisibleProvider implements VerifyProviderInterface
         Log::info('Captcha verification succeeded.');
 
         (new VerificationService($verification))->setActive(false);
-        Log::info(Hash::check($request->get('answer'), $verification->control));
+        Log::info($request->all());
+        Log::warning(Hash::check($request->get('answer'), $verification->control));
         return Hash::check($request->get('answer'), $verification->control);
     }
 
