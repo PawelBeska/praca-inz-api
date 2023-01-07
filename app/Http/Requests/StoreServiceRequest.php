@@ -2,34 +2,30 @@
 
 namespace App\Http\Requests;
 
-use App\Enums\ServiceTypeEnum;
-use App\Models\Service;
+use App\Dto\ServiceDto;
+use App\Enums\ServiceStatusEnum;
+use App\Interfaces\RequestToDtoInterface;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Validation\Rules\Enum;
+use Illuminate\Support\Str;
 
-class StoreServiceRequest extends FormRequest
+class StoreServiceRequest extends FormRequest implements RequestToDtoInterface
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     *
-     * @return bool
-     */
-    public function authorize()
-    {
-        return Auth::user()->can('create', Service::class);
-    }
-
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array
-     */
-    public function rules()
+    public function rules(): array
     {
         return [
             'name' => ['required', 'string', 'max:255'],
-            'type'=>['required','string',new Enum(ServiceTypeEnum::class)],
         ];
+    }
+
+    public function toDto(): ServiceDto
+    {
+        return new ServiceDto(
+            $this->get('name'),
+            Auth::user(),
+            ServiceStatusEnum::ACTIVE,
+            now()->addMonth(),
+            Str::uuid()
+        );
     }
 }

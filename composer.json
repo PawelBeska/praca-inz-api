@@ -9,20 +9,22 @@
         "binarytorch/larecipe": "^2.4",
         "fruitcake/laravel-cors": "^2.0",
         "guzzlehttp/guzzle": "^7.0.1",
+        "illuminate/pipeline": "*",
         "intervention/image": "^2.7",
-        "laravel/framework": "^8.75",
+        "laravel/framework": "^9.0",
         "laravel/sanctum": "^2.13",
         "laravel/telescope": "^4.6",
         "laravel/tinker": "^2.5",
         "thiagoalessio/tesseract_ocr": "^2.12"
     },
     "require-dev": {
-        "facade/ignition": "^2.5",
         "fakerphp/faker": "^1.9.1",
         "laravel/sail": "^1.0.1",
         "mockery/mockery": "^1.4.4",
-        "nunomaduro/collision": "^5.10",
-        "phpunit/phpunit": "^9.5.10"
+        "nunomaduro/collision": "^6.1",
+        "phpunit/phpunit": "^9.5.10",
+        "spatie/laravel-ignition": "^1.0",
+        "spatie/laravel-ray": "^1.31"
     },
     "autoload": {
         "psr-4": {

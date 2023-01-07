@@ -2,80 +2,78 @@
 
 namespace App\Services\Captcha\Providers;
 
-use App\Enums\ServiceTypeEnum;
+use App\Dto\CaptchaGenerationDto;
+use App\Dto\CaptchaVerificationDto;
+use App\Enums\VerificationTypeEnum;
+use App\Interfaces\DtoInterface;
 use App\Interfaces\VerifyProviderInterface;
-use App\Models\Service;
-use App\Models\Verification;
+use App\Repositories\VerificationRepositoryInterface;
+use App\Services\Captcha\Dto\InvisibleDto;
 use App\Services\Captcha\VerificationService;
-use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Http\Request;
+use App\Services\Captcha\VerifyRules\ActiveRule;
+use App\Services\Captcha\VerifyRules\HashRule;
+use App\Services\Captcha\VerifyRules\IpAddressRule;
+use App\Services\Captcha\VerifyRules\NotExpiredRule;
+use App\Services\Captcha\VerifyRules\PrivateKeyRule;
+use App\Services\Captcha\VerifyRules\ServiceIdRule;
+use Carbon\Carbon;
+use Closure;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
-use JetBrains\PhpStorm\ArrayShape;
 
 class InvisibleProvider implements VerifyProviderInterface
 {
-
-
-    public function __construct(private Service $service, private array|FormRequest|Request $request)
-    {
+    public function __construct(
+        private readonly VerificationRepositoryInterface $verificationRepository,
+        private readonly VerificationService $verificationService,
+    ) {
     }
 
-    public function verify(Verification $verification, array|FormRequest|Request $request): bool
+    public function handle(CaptchaGenerationDto $captchaGenerationDto, Closure $next)
     {
-
-
-        if (
-            !$verification->active ||
-            $verification->service_id !== $this->service->id ||
-            $request->ip() !== $verification->ip_address ||
-            $verification->valid_until->isPast()) {
-            Log::info('Captcha verification failed. Verification is not active, or the IP address is not the same as the one used for the verification, or the verification has expired.');
-            return false;
+        if (!$this->active($captchaGenerationDto)) {
+            return $next($captchaGenerationDto);
         }
-        Log::info('Captcha verification succeeded.');
 
-        (new VerificationService($verification))->setActive(false);
-        Log::info($request->all());
-        Log::warning(Hash::check($request->get('answer'), $verification->control));
-        return Hash::check($request->get('answer'), $verification->control);
+        return $this->generate($captchaGenerationDto);
     }
 
+    public function verify(CaptchaVerificationDto $captchaVerificationDto): bool
+    {
+        return (bool)$captchaVerificationDto->pipeThrough(
+            [
+                PrivateKeyRule::class,
+                ActiveRule::class,
+                ServiceIdRule::class,
+                IpAddressRule::class,
+                NotExpiredRule::class,
+                HashRule::class
+            ]
+        )->thenReturn();
+    }
 
-    /**
-     * @return array
-     * @throws \Exception
-     */
-    #[ArrayShape([
-        'image' => "string",
-        'token' => ["\Ramsey\Uuid\UuidInterface", null],
-        'type' => "string"
-    ])]
-    public function generate(): array
+    public function generate(CaptchaGenerationDto $captchaGenerationDto): DtoInterface
     {
         $token = Str::uuid();
 
-        $verification = (new VerificationService())->add(
-            $this,
+        $verification = $this->verificationService->add(
             $token,
-            $this->service,
-            $this->request->ip()
+            VerificationTypeEnum::INVISIBLE,
+            $captchaGenerationDto,
         );
 
-
-        return [
-            'type' => (string) $this,
-            'token' => $verification->uuid,
-            'access_token' => $token,
-        ];
+        return new InvisibleDto(
+            $verification,
+            $token
+        );
     }
 
-    /**
-     * @return string
-     */
-    public function __toString(): string
+    private function active(CaptchaGenerationDto $captchaGenerationDto): bool
     {
-        return ServiceTypeEnum::INVISIBLE->value;
+        return $this->verificationRepository->getVerificationCountByIpAndDate(
+                $captchaGenerationDto->ipAddress,
+                Carbon::now()->subHour(),
+                Carbon::now()->addHour()
+            ) < VerificationTypeEnum::INVISIBLE->getConfig('max_attempts');
     }
 }

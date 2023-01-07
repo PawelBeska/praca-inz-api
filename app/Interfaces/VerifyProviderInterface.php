@@ -2,20 +2,15 @@
 
 namespace App\Interfaces;
 
-use App\Models\Service;
-use App\Models\Verification;
-use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Http\Request;
+use App\Dto\CaptchaGenerationDto;
+use App\Dto\CaptchaVerificationDto;
+use Closure;
 
 interface  VerifyProviderInterface
 {
+    public function handle(CaptchaGenerationDto $captchaGenerationDto, Closure $next);
 
-    public function __construct(Service $service,Array|FormRequest|Request $request);
+    public function verify(CaptchaVerificationDto $captchaVerificationDto): bool;
 
-
-    public function verify(Verification $verification, Array|FormRequest|Request $request);
-
-    public function generate();
-
-    public function __toString(): string;
+    public function generate(CaptchaGenerationDto $captchaGenerationDto): DtoInterface;
 }

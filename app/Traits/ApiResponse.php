@@ -15,7 +15,7 @@ trait ApiResponse
      * @return JsonResponse
      */
 
-    public function successResponse($data, string $message = null, int $code = ResponseAlias::HTTP_OK): JsonResponse
+    public function successResponse($data = null, string $message = null, int $code = ResponseAlias::HTTP_OK): JsonResponse
     {
         return response()->json([
             'message' => $message,

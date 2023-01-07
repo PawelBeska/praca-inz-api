@@ -4,32 +4,25 @@ namespace App\Traits;
 use Illuminate\Support\Str;
 trait HasUuid
 {
-
-    /**
-     * Boot function from Laravel.
-     */
-    public static function bootUsesUuid(): void
+    protected static function boot()
     {
-        static::creating(function ($model) {
-            $model->uuid = Str::uuid();
-        });
+        parent::boot();
+
+        $creationCallback = function ($model) {
+            if (empty($model->{$model->getKeyName()})) {
+                $model->{$model->getKeyName()} = Str::uuid()->toString();
+            }
+        };
+
+        static::creating($creationCallback);
     }
 
-    /**
-     * Get the value indicating whether the IDs are incrementing.
-     *
-     * @return bool
-     */
-    public function getIncrementing()
+    public function getIncrementing(): bool
     {
         return false;
     }
-    /**
-     * Get the auto-incrementing key type.
-     *
-     * @return string
-     */
-    public function getKeyType()
+
+    public function getKeyType(): string
     {
         return 'string';
     }

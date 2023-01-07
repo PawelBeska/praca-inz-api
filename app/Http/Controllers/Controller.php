@@ -12,9 +12,12 @@ use Throwable;
 
 class Controller extends BaseController
 {
-    use AuthorizesRequests, DispatchesJobs, ValidatesRequests, ApiResponse;
+    use ApiResponse;
+    use AuthorizesRequests;
+    use DispatchesJobs;
+    use ValidatesRequests;
 
-    public function reportError(Throwable $e)
+    public function reportError(Throwable $e): void
     {
         Log::error(
             $e->getMessage()

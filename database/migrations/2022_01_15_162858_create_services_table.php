@@ -6,31 +6,20 @@ use Illuminate\Support\Facades\Schema;
 
 class CreateServicesTable extends Migration
 {
-    /**
-     * Run the migrations.
-     *
-     * @return void
-     */
-    public function up()
+    public function up(): void
     {
-        Schema::create('services', function (Blueprint $table) {
-            $table->id();
-            $table->uuid('uuid')->unique();
+        Schema::create('services', static function (Blueprint $table) {
+            $table->uuid('id')->primary();
             $table->foreignId('user_id')->constrained('users')->cascadeOnDelete()->cascadeOnUpdate();
-            $table->string('name')->nullable(false);
-            $table->string('type')->nullable(false);
-            $table->string('status')->nullable(false);
+            $table->mediumText('private_key');
+            $table->string('name');
+            $table->string('status');
             $table->datetime('valid_until');
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
-    public function down()
+    public function down(): void
     {
         Schema::dropIfExists('services');
     }

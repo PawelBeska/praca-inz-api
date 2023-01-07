@@ -2,51 +2,44 @@
 
 namespace App\Models;
 
-use App\Helpers\BaseHelper;
+use App\Enums\ServiceStatusEnum;
+use App\Enums\VerificationTypeEnum;
 use App\Traits\HasUuid;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Support\Str;
 
 /**
- * @property int $id
- * @property string $uuid
- * @property mixed $valid_until
- * @property mixed $status
- * @property mixed $type
- * @property mixed $name
- * @property mixed $user_id
+ * @property string $id
+ * @property int $user_id
+ * @property string $name
+ * @property Carbon $valid_until
+ * @property ServiceStatusEnum $status
+ * @property VerificationTypeEnum $type
+ * @property string $private_key
+ * @property Carbon $updated_at
+ * @property Carbon $created_at
  */
 class Service extends Model
 {
-    use HasFactory;
+    use HasFactory, HasUuid;
 
+    protected $guarded = [];
+    /**
+     * @var mixed|string|null
+     */
     protected $casts = [
         'valid_until' => 'datetime',
+        'status' => ServiceStatusEnum::class,
     ];
 
     protected $dates = ['created_at', 'updated_at', 'valid_until'];
 
-
-    protected static function booted()
+    public function user(): BelongsTo
     {
-        parent::boot();
-
-        static::creating(function ($service) {
-            $service->uuid = Str::uuid();
-        });
-
-    }
-
-    /**
-     * @return HasOne
-     */
-    public function user(): HasOne
-    {
-        return $this->hasOne(User::class);
+        return $this->belongsTo(User::class);
     }
 
     public function verifications(): HasMany

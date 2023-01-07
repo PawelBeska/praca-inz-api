@@ -16,40 +16,16 @@ use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 
 class Handler extends ExceptionHandler
 {
-    /**
-     * A list of the exception types that are not reported.
-     *
-     * @var array<int, class-string<Throwable>>
-     */
     protected $dontReport = [
         //
     ];
 
-    /**
-     * A list of the inputs that are never flashed for validation exceptions.
-     *
-     * @var array<int, string>
-     */
     protected $dontFlash = [
         'current_password',
         'password',
         'password_confirmation',
     ];
 
-    /**
-     * Register the exception handling callbacks for the application.
-     *
-     * @return void
-     */
-    public function register()
-    {
-    }
-
-    /**
-     * @param $request
-     * @param ValidationException $exception
-     * @return JsonResponse
-     */
     protected function invalidJson($request, ValidationException $exception): JsonResponse
     {
         return response()->json([
@@ -61,10 +37,6 @@ class Handler extends ExceptionHandler
         ], $exception->status);
     }
 
-    /**
-     * @param ValidationException $exception
-     * @return array
-     */
     private function transformErrors(ValidationException $exception): array
     {
         $errors = [];
@@ -79,12 +51,6 @@ class Handler extends ExceptionHandler
         return $errors;
     }
 
-    /**
-     * @param $request
-     * @param Throwable $e
-     * @return Response|JsonResponse|Redirector|RedirectResponse|Application|ResponseAlias
-     * @throws Throwable
-     */
     public function render($request, Throwable $e): Response|JsonResponse|Redirector|RedirectResponse|Application|ResponseAlias
     {
         if ($e instanceof ModelNotFoundException) {
@@ -94,17 +60,14 @@ class Handler extends ExceptionHandler
                 'message' => "Object not found",
 
             ], ResponseAlias::HTTP_UNPROCESSABLE_ENTITY);
-        } else if ($e instanceof NotFoundHttpException) {
-            if ($request->wantsJson())
-                return response()->json([
-                    'status' => "error",
-                    'code' => "422",
-                    'message' => "Page not found",
+        }
+        if ($e instanceof NotFoundHttpException) {
+            return response()->json([
+                'status' => "error",
+                'code' => "422",
+                'message' => "Page not found",
 
-                ], ResponseAlias::HTTP_NOT_FOUND);
-            else
-                return redirect()->to('https://webguard.pl/notfound');
-
+            ], ResponseAlias::HTTP_NOT_FOUND);
         }
         return parent::render($request, $e);
     }

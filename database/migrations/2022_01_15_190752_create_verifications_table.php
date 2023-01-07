@@ -6,29 +6,20 @@ use Illuminate\Support\Facades\Schema;
 
 class CreateVerificationsTable extends Migration
 {
-    /**
-     * Run the migrations.
-     *
-     * @return void
-     */
-    public function up()
+    public function up(): void
     {
-        Schema::create('verifications', function (Blueprint $table) {
-            $table->uuid('uuid')->primary();
-            $table->foreignId('service_id')->constrained('services')->cascadeOnDelete()->cascadeOnUpdate();
-            $table->boolean('active')->default(1)->nullable(false);
-            $table->string('type')->nullable(false);
-            $table->string('control')->nullable(false);
+        Schema::create('verifications', static function (Blueprint $table) {
+            $table->uuid('id')->primary();
+            $table->foreignUuid('service_id')->constrained('services')->cascadeOnDelete()->cascadeOnUpdate();
+            $table->boolean('active')->default(1);
+            $table->ipAddress();
+            $table->string('type');
+            $table->string('control');
             $table->datetime('valid_until');
         });
     }
 
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
-    public function down()
+    public function down(): void
     {
         Schema::dropIfExists('verifications');
     }

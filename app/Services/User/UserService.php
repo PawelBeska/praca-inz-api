@@ -10,15 +10,15 @@ use Illuminate\Support\Str;
 
 class UserService
 {
-
-    private Authenticatable|User $user;
-
-    /**
-     * @param \Illuminate\Contracts\Auth\Authenticatable|\App\Models\User|null $user
-     */
-    public function __construct(Authenticatable|User $user = null)
+    public function __construct(private Authenticatable|User $user = new User())
     {
-        $this->user = $user ?: new User();
+    }
+
+    public function setInstance(?User $user): static
+    {
+        $this->user = $user;
+
+        return $this;
     }
 
     /**
@@ -30,7 +30,7 @@ class UserService
     {
         $this->user->role_id = optional($role)->id ?? Role::getDefaultRole()->id;
         $this->user->email = Arr::get($data, 'email', $this->user->email);
-        $this->user->full_name = Arr::get($data, 'email', $this->user->email);
+        $this->user->full_name = Arr::get($data, 'full_name', $this->user->email);
         if (Arr::get($data, 'password', false)) {
             $this->user->password = bcrypt(Arr::get($data, 'password'));
         }

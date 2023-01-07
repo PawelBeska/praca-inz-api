@@ -6,26 +6,16 @@ use Illuminate\Support\Facades\Schema;
 
 class AddRoleIdToUsersTable extends Migration
 {
-    /**
-     * Run the migrations.
-     *
-     * @return void
-     */
-    public function up()
+    public function up(): void
     {
-        Schema::table('users', function (Blueprint $table) {
+        Schema::table('users', static function (Blueprint $table) {
             $table->foreignId('role_id')->nullable()->after('id')->constrained('roles')->cascadeOnDelete()->cascadeOnUpdate();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
-    public function down()
+    public function down(): void
     {
-        Schema::table('users', function (Blueprint $table) {
+        Schema::table('users', static function (Blueprint $table) {
             //
         });
     }

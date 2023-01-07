@@ -1,46 +1,34 @@
 <?php
 
 use App\Http\Controllers\V1\Auth\AuthController;
-use Illuminate\Http\Request;
+use App\Http\Controllers\V1\CaptchaController;
+use App\Http\Controllers\V1\ProfileController;
+use App\Http\Controllers\V1\ServiceController;
 use Illuminate\Support\Facades\Route;
-
-/*
-|--------------------------------------------------------------------------
-| API Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| is assigned the "api" middleware group. Enjoy building your API!
-|
-*/
 
 Route::prefix('/auth')->group(function () {
     Route::post('/login', [AuthController::class, 'login'])->name('login');
     Route::post('/register', [AuthController::class, 'register'])->name('register');
-    Route::get('/register/activate/{token}', [AuthController::class, 'verifyEmail']);
+    Route::get('/register/activate/{token}', [AuthController::class, 'verifyEmail'])->name('verifyEmail');
 
-    Route::post('/password/forgot-password', [AuthController::class, 'passwordForgot']);
-    Route::post('/password/reset', [AuthController::class, 'passwordReset']);
+    Route::post('/password/forgot', [AuthController::class, 'passwordForgot'])->name('passwordForgot');
+    Route::post('/password/reset', [AuthController::class, 'passwordReset'])->name('passwordReset');
 
 
     Route::middleware(['auth:sanctum'])->group(function () {
         Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
-
     });
-
-
 });
 Route::middleware('auth:sanctum')->name('dashboard.')->group(function () {
-    Route::apiResource('services', \App\Http\Controllers\V1\ServiceController::class);
-    Route::apiResource('profile', \App\Http\Controllers\V1\ProfileController::class)->only(['index', 'update']);
-    Route::apiResource('stats', \App\Http\Controllers\V1\StatController::class)->only(['index']);
-
+    Route::apiResource('services', ServiceController::class);
+    Route::apiResource('profile', ProfileController::class)->only(['index', 'update']);
 });
 
 
-Route::prefix('/captcha/{service:uuid}/')->middleware('captcha')->name('captcha.')->group(function () {
-    Route::get('/generate', [\App\Http\Controllers\V1\CaptchaController::class, 'generate'])->name('generate');
-    Route::post('/generate', [\App\Http\Controllers\V1\CaptchaController::class, 'generate'])->name('generate');
-    Route::post('/verify/{verification:uuid}', [\App\Http\Controllers\V1\CaptchaController::class, 'verify'])->name('verify');
-});
+Route::prefix('/captcha/{service}/')
+    ->middleware('captcha')
+    ->name('captcha.')
+    ->group(function () {
+        Route::post('/generate', [CaptchaController::class, 'generate'])->name('generate');
+        Route::post('/verify/{verification}', [CaptchaController::class, 'verify'])->name('verify');
+    });
