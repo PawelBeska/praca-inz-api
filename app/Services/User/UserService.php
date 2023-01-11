@@ -2,7 +2,6 @@
 
 namespace App\Services\User;
 
-use App\Models\Role;
 use App\Models\User;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Support\Arr;
@@ -23,12 +22,10 @@ class UserService
 
     /**
      * @param array $data
-     * @param Role|null $role
      * @return User
      */
-    public function assignData(array $data, Role $role = null): User
+    public function assignData(array $data): User
     {
-        $this->user->role_id = optional($role)->id ?? Role::getDefaultRole()->id;
         $this->user->email = Arr::get($data, 'email', $this->user->email);
         $this->user->full_name = Arr::get($data, 'full_name', $this->user->email);
         if (Arr::get($data, 'password', false)) {

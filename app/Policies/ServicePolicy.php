@@ -17,7 +17,7 @@ class ServicePolicy
 
     public function view(User $user, Service $service): bool
     {
-        return true;
+        return $user->id === $service->user_id;
     }
 
     public function create(User $user): bool

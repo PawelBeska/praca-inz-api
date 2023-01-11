@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Notifications\ResetPassword as ResetPasswordNotification;
 use App\Notifications\SignupActivate;
+use Carbon\Carbon;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -15,13 +16,11 @@ use Illuminate\Support\Facades\DB;
 use Laravel\Sanctum\HasApiTokens;
 
 /**
- * @property string $id
- * @property mixed $email
- * @property mixed|null $email_verified_at
- * @property mixed|\Ramsey\Uuid\UuidInterface|null $user_activation_key
- * @property mixed|string $password
- * @property array|\ArrayAccess|mixed $full_name
- * @property mixed $role_id
+ * @property int $id
+ * @property string $email
+ * @property Carbon $email_verified_at
+ * @property string $user_activation_key
+ * @property string $full_name
  */
 class User extends Authenticatable implements MustVerifyEmail
 {
@@ -30,7 +29,6 @@ class User extends Authenticatable implements MustVerifyEmail
     use Notifiable;
 
     protected $fillable = [
-        'role_id',
         'name',
         'email',
         'email_verified_at',
@@ -53,45 +51,9 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasMany(Service::class);
     }
 
-    public function permissions(): Collection
-    {
-        return $this->role->permissions()->pluck('name');
-    }
-
-    public function hasPermission(string $permission): bool
-    {
-        return true;
-        return in_array($permission, $this->permissions()->toArray());
-    }
-
-    public function hasPermissions(array $permissions): bool
-    {
-        foreach ($permissions as $permission) {
-            if ($this->hasPermission($permission)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     public function scopeWhereEmail(Builder $query, string $email): Builder
     {
         return $query->where('email', $email);
-    }
-
-    public function hasRole(string $role): bool
-    {
-        return $this->role()->first()->id == $role;
-    }
-
-    public function hasRoles(array $roles): bool
-    {
-        foreach ($roles as $role) {
-            if ($this->hasRole($role)) {
-                return true;
-            }
-        }
-        return false;
     }
 
     public function scopeWhereActivationToken(Builder $query, string $token): Builder
