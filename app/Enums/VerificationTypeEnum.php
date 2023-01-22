@@ -2,16 +2,16 @@
 
 namespace App\Enums;
 
-use App\Interfaces\VerifyProviderInterface;
 use App\Services\Captcha\Providers\InvisibleProvider;
 use App\Services\Captcha\Providers\TextProvider;
+use App\Services\Captcha\Providers\VerificationProvider;
 
 enum VerificationTypeEnum: string
 {
     case TEXT = 'text';
     case INVISIBLE = 'invisible';
 
-    public function getVerifyProviders(): array
+    public function getVerificationProviders(): array
     {
         return [
             self::TEXT->value => TextProvider::class,
@@ -19,9 +19,9 @@ enum VerificationTypeEnum: string
         ];
     }
 
-    public function getVerifyProvider(): VerifyProviderInterface
+    public function getVerificationProvider(): VerificationProvider
     {
-        return app($this->getVerifyProviders()[$this->value]);
+        return app($this->getVerificationProviders()[$this->value]);
     }
 
     public function getConfig(?string $key): mixed

@@ -6,10 +6,7 @@ use App\Dto\CaptchaGenerationDto;
 use App\Dto\CaptchaVerificationDto;
 use App\Enums\VerificationTypeEnum;
 use App\Interfaces\DtoInterface;
-use App\Interfaces\VerifyProviderInterface;
-use App\Repositories\VerificationRepositoryInterface;
 use App\Services\Captcha\Dto\TextDto;
-use App\Services\Captcha\VerificationService;
 use App\Services\Captcha\VerifyRules\ActiveRule;
 use App\Services\Captcha\VerifyRules\HashRule;
 use App\Services\Captcha\VerifyRules\IpAddressRule;
@@ -18,18 +15,11 @@ use App\Services\Captcha\VerifyRules\PrivateKeyRule;
 use App\Services\Captcha\VerifyRules\ServiceIdRule;
 use Carbon\Carbon;
 use Closure;
-use Illuminate\Support\Facades\Hash;
 use Intervention\Image\Facades\Image;
 use Intervention\Image\Gd\Font;
 
-class TextProvider implements VerifyProviderInterface
+class TextProvider extends VerificationProvider
 {
-    public function __construct(
-        private readonly VerificationRepositoryInterface $verificationRepository,
-        private readonly VerificationService $verificationService,
-    ) {
-    }
-
     public function handle(CaptchaGenerationDto $captchaGenerationDto, Closure $next)
     {
         if (!$this->active($captchaGenerationDto)) {
@@ -71,7 +61,7 @@ class TextProvider implements VerifyProviderInterface
         );
     }
 
-    private function active(CaptchaGenerationDto $captchaGenerationDto): bool
+    protected function active(CaptchaGenerationDto $captchaGenerationDto): bool
     {
         return $this->verificationRepository->getVerificationCountByIpAndDate(
                 $captchaGenerationDto->ipAddress,

@@ -30,7 +30,7 @@ class CaptchaService
     {
         $verificationData = $captchaVerificationDto->verification
             ->type
-            ->getVerifyProvider()
+            ->getVerificationProvider()
             ->verify($captchaVerificationDto);
 
         $this->verificationService
