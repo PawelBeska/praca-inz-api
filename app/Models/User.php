@@ -61,7 +61,6 @@ class User extends Authenticatable implements MustVerifyEmail
         return $query->where('user_activation_key', $token);
     }
 
-
     public function sendPasswordResetNotification($token): void
     {
         $this->notify(new ResetPasswordNotification($token, $this->email));
@@ -71,5 +70,4 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         $this->notify(new SignupActivate());
     }
-
 }

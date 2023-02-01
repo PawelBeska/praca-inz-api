@@ -6,11 +6,13 @@ use App\Dto\CaptchaVerificationDto;
 use App\Interfaces\VerifyRuleInterface;
 use Closure;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class HashRule implements VerifyRuleInterface
 {
     public function handle(CaptchaVerificationDto $captchaVerificationDto, Closure $next)
     {
+        ray($this->validate($captchaVerificationDto));
         if ($this->validate($captchaVerificationDto)) {
             return $next($captchaVerificationDto);
         }
@@ -19,6 +21,6 @@ class HashRule implements VerifyRuleInterface
 
     private function validate(CaptchaVerificationDto $captchaVerificationDto): bool
     {
-        return Hash::check($captchaVerificationDto->answer, $captchaVerificationDto->verification->control);
+        return Hash::check(Str::of($captchaVerificationDto->answer)->lower(), $captchaVerificationDto->verification->control);
     }
 }

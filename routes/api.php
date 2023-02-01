@@ -25,7 +25,7 @@ Route::middleware('auth:sanctum')->name('dashboard.')->group(function () {
 });
 
 
-Route::prefix('/captcha/{service}/')
+Route::prefix('/captcha/{service}')
     ->middleware('captcha')
     ->name('captcha.')
     ->group(function () {

@@ -6,6 +6,7 @@ use App\Dto\CaptchaGenerationDto;
 use App\Dto\CaptchaVerificationDto;
 use App\Services\Captcha\Providers\InvisibleProvider;
 use App\Services\Captcha\Providers\TextProvider;
+use Illuminate\Support\Facades\Log;
 
 class CaptchaService
 {

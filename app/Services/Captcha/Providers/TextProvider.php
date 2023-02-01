@@ -18,7 +18,6 @@ use App\Services\Captcha\VerifyRules\PrivateKeyRule;
 use App\Services\Captcha\VerifyRules\ServiceIdRule;
 use Carbon\Carbon;
 use Closure;
-use Illuminate\Support\Facades\Hash;
 use Intervention\Image\Facades\Image;
 use Intervention\Image\Gd\Font;
 
@@ -82,7 +81,7 @@ class TextProvider implements VerifyProviderInterface
 
     private function generateString($length = 8): string
     {
-        $characters = '23456789abcdefghkmnpqstuvwxyzABCDEFGHKLMNPRSTUVWXYZ';
+        $characters = '23456789abcdefghkmnpqstuvwxyz';
         $charactersLength = strlen($characters);
         $randomString = '';
         for ($i = 0; $i < $length; $i++) {

@@ -10,6 +10,7 @@ class IpAddressRule implements VerifyRuleInterface
 {
     public function handle(CaptchaVerificationDto $captchaVerificationDto, Closure $next)
     {
+        ray($this->validate($captchaVerificationDto));
         if ($this->validate($captchaVerificationDto)) {
             return $next($captchaVerificationDto);
         }
