@@ -23,8 +23,11 @@ class VerificationService
         return $this;
     }
 
-    public function add(string $text, VerificationTypeEnum $verificationTypeEnum, CaptchaGenerationDto $captchaGenerationDto): Verification
-    {
+    public function add(
+        string $text,
+        VerificationTypeEnum $verificationTypeEnum,
+        CaptchaGenerationDto $captchaGenerationDto
+    ): Verification {
         return $this->assignData([
             'type' => $verificationTypeEnum,
             'text' => $text,
